@@ -30,8 +30,8 @@ RUN mkdir -p uploads temp data logs && \
 # Cambiar a usuario no-root por seguridad
 USER node
 
-# Build de Next.js 15
-RUN npm run build
+# Generar cliente de Prisma y build de Next.js 15
+RUN npx prisma generate && npm run build
 
 # Exponer puerto
 EXPOSE 3000
