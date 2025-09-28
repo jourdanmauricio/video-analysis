@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "./.auth";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { nextUrl } = request;
 
-  // Verificar si hay un token de sesión en las cookies
-  const token =
-    request.cookies.get("authjs.session-token") ||
-    request.cookies.get("next-auth.session-token") ||
-    request.cookies.get("__Secure-next-auth.session-token");
-
-  const isLoggedIn = !!token;
+  // Verificar sesión usando NextAuth
+  const session = await auth();
+  const isLoggedIn = !!session;
 
   // Rutas públicas que no requieren autenticación
   const publicRoutes = ["/login"];
