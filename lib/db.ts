@@ -1,20 +1,71 @@
-import Database from "better-sqlite3";
-import path from "path";
+import { prisma } from "./prisma";
 
-const dbPath = path.join(process.cwd(), "data", "database.sqlite");
-const db = new Database(dbPath);
+// Exportar Prisma client para uso en la aplicación
+export default prisma;
 
-// Crear tabla users si no existe
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    lastname TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    role TEXT DEFAULT 'user',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+// Funciones de utilidad para usuarios
+export const userQueries = {
+  // Crear usuario
+  async create(data: {
+    name: string;
+    lastname: string;
+    email: string;
+    password: string;
+    role?: string;
+  }) {
+    return await prisma.user.create({
+      data: {
+        name: data.name,
+        lastname: data.lastname,
+        email: data.email,
+        password: data.password,
+        role: data.role || "user",
+      },
+    });
+  },
 
-export default db;
+  // Buscar usuario por email
+  async findByEmail(email: string) {
+    return await prisma.user.findUnique({
+      where: { email },
+    });
+  },
+
+  // Buscar usuario por ID
+  async findById(id: number) {
+    return await prisma.user.findUnique({
+      where: { id },
+    });
+  },
+
+  // Actualizar usuario
+  async update(
+    id: number,
+    data: Partial<{
+      name: string;
+      lastname: string;
+      email: string;
+      password: string;
+      role: string;
+    }>
+  ) {
+    return await prisma.user.update({
+      where: { id },
+      data,
+    });
+  },
+
+  // Eliminar usuario
+  async delete(id: number) {
+    return await prisma.user.delete({
+      where: { id },
+    });
+  },
+
+  // Listar todos los usuarios
+  async findAll() {
+    return await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  },
+};

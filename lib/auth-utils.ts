@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import db from "./db";
+import { userQueries } from "./db";
 
 export interface User {
   id: number;
@@ -8,7 +8,7 @@ export interface User {
   email: string;
   password: string;
   role: string;
-  created_at: string;
+  createdAt: Date;
 }
 
 export async function createUser(userData: {
@@ -20,34 +20,23 @@ export async function createUser(userData: {
 }): Promise<User> {
   const hashedPassword = await bcrypt.hash(userData.password, 12);
 
-  const stmt = db.prepare(`
-    INSERT INTO users (name, lastname, email, password, role)
-    VALUES (?, ?, ?, ?, ?)
-  `);
+  const user = await userQueries.create({
+    name: userData.name,
+    lastname: userData.lastname,
+    email: userData.email,
+    password: hashedPassword,
+    role: userData.role || "user",
+  });
 
-  const result = stmt.run(
-    userData.name,
-    userData.lastname,
-    userData.email,
-    hashedPassword,
-    userData.role || "user"
-  );
-
-  const user = getUserById(result.lastInsertRowid as number);
-  if (!user) {
-    throw new Error("Error al crear el usuario");
-  }
   return user;
 }
 
-export function getUserByEmail(email: string): User | null {
-  const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
-  return stmt.get(email) as User | null;
+export async function getUserByEmail(email: string): Promise<User | null> {
+  return await userQueries.findByEmail(email);
 }
 
-export function getUserById(id: number): User | null {
-  const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
-  return stmt.get(id) as User | null;
+export async function getUserById(id: number): Promise<User | null> {
+  return await userQueries.findById(id);
 }
 
 export async function verifyPassword(

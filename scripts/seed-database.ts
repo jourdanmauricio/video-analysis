@@ -52,7 +52,7 @@ async function seedDatabase() {
   for (const userData of usersToCreate) {
     try {
       // Verificar si el usuario ya existe
-      const existingUser = getUserByEmail(userData.email);
+      const existingUser = await getUserByEmail(userData.email);
 
       if (existingUser) {
         console.log(`⚠️  Usuario ${userData.email} ya existe, saltando...`);

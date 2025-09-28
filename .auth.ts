@@ -15,7 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const user = getUserByEmail(credentials.email as string);
+        const user = await getUserByEmail(credentials.email as string);
 
         if (!user) {
           return null;
