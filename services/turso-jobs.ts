@@ -1,36 +1,45 @@
+import { createClient } from "@libsql/client";
 import { ProcessingStatus } from "../types";
-import jobsDb from "./jobs-db";
+
+const client = createClient({
+  url: process.env.DATABASE_URL!,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
 // Funciones de utilidad para trabajos
 export const jobQueries = {
   // Crear trabajo
-  create(): string {
+  async create(): Promise<string> {
     const jobId = `job_${Date.now()}_${Math.random()
       .toString(36)
       .substring(2, 8)}`;
     const now = Date.now();
 
-    const stmt = jobsDb.prepare(`
-      INSERT INTO jobs (job_id, status, step, progress, message, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    stmt.run(
-      jobId,
-      "processing",
-      "uploading",
-      0,
-      "Procesando archivo de video...",
-      now,
-      now
-    );
+    await client.execute({
+      sql: `
+        INSERT INTO jobs (job_id, status, step, progress, message, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+      args: [
+        jobId,
+        "processing",
+        "uploading",
+        0,
+        "Procesando archivo de video...",
+        now,
+        now,
+      ],
+    });
 
     console.log(`Created job: ${jobId}`);
     return jobId;
   },
 
   // Actualizar estado del trabajo
-  updateStatus(jobId: string, updates: Partial<ProcessingStatus>): void {
+  async updateStatus(
+    jobId: string,
+    updates: Partial<ProcessingStatus>
+  ): Promise<void> {
     const now = Date.now();
 
     // Construir la query dinámicamente
@@ -68,10 +77,13 @@ export const jobQueries = {
     values.push(jobId); // Para el WHERE
 
     const query = `UPDATE jobs SET ${fields.join(", ")} WHERE job_id = ?`;
-    const stmt = jobsDb.prepare(query);
-    const result = stmt.run(...values);
 
-    if (result.changes > 0) {
+    const result = await client.execute({
+      sql: query,
+      args: values,
+    });
+
+    if (result.rowsAffected > 0) {
       console.log(
         `Updated job ${jobId}: ${updates.step || "unknown"} - ${
           updates.progress || 0
@@ -83,31 +95,21 @@ export const jobQueries = {
   },
 
   // Obtener estado del trabajo
-  getStatus(jobId: string): ProcessingStatus | undefined {
-    const stmt = jobsDb.prepare(`
-      SELECT * FROM jobs WHERE job_id = ?
-    `);
+  async getStatus(jobId: string): Promise<ProcessingStatus | undefined> {
+    const result = await client.execute({
+      sql: `SELECT * FROM jobs WHERE job_id = ?`,
+      args: [jobId],
+    });
 
-    const row = stmt.get(jobId) as
-      | {
-          job_id: string;
-          status: string;
-          step: string;
-          progress: number;
-          message: string;
-          error?: string;
-          result_transcription?: string;
-          result_gpt_response?: string;
-        }
-      | undefined;
-
-    if (!row) {
+    if (result.rows.length === 0) {
       console.log(`Job ${jobId} not found`);
       return undefined;
     }
 
+    const row = result.rows[0];
+
     const status: ProcessingStatus = {
-      jobId: row.job_id,
+      jobId: row.job_id as string,
       status: row.status as "processing" | "completed" | "error",
       step: row.step as
         | "uploading"
@@ -115,14 +117,14 @@ export const jobQueries = {
         | "transcribing"
         | "generating_response"
         | "completed",
-      progress: row.progress,
-      message: row.message,
-      error: row.error || undefined,
+      progress: row.progress as number,
+      message: row.message as string,
+      error: (row.error as string) || undefined,
       result:
         row.result_transcription && row.result_gpt_response
           ? {
-              transcription: row.result_transcription,
-              gptResponse: row.result_gpt_response,
+              transcription: row.result_transcription as string,
+              gptResponse: row.result_gpt_response as string,
             }
           : undefined,
     };
@@ -132,12 +134,12 @@ export const jobQueries = {
   },
 
   // Completar trabajo
-  complete(
+  async complete(
     jobId: string,
     result: { transcription: string; gptResponse: string }
-  ): void {
+  ): Promise<void> {
     console.log(`Completing job ${jobId}`);
-    this.updateStatus(jobId, {
+    await this.updateStatus(jobId, {
       status: "completed",
       step: "completed",
       progress: 100,
@@ -147,9 +149,9 @@ export const jobQueries = {
   },
 
   // Fallar trabajo
-  fail(jobId: string, error: string): void {
+  async fail(jobId: string, error: string): Promise<void> {
     console.log(`Failing job ${jobId}: ${error}`);
-    this.updateStatus(jobId, {
+    await this.updateStatus(jobId, {
       status: "error",
       progress: 0,
       message: "Error en el procesamiento",
@@ -158,51 +160,54 @@ export const jobQueries = {
   },
 
   // Limpiar trabajos antiguos
-  cleanupOld(): void {
+  async cleanupOld(): Promise<void> {
     const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
 
-    const stmt = jobsDb.prepare("DELETE FROM jobs WHERE created_at < ?");
-    const result = stmt.run(oneDayAgo);
+    const result = await client.execute({
+      sql: "DELETE FROM jobs WHERE created_at < ?",
+      args: [oneDayAgo],
+    });
 
-    if (result.changes > 0) {
-      console.log(`Cleaned up ${result.changes} old jobs`);
+    if (result.rowsAffected > 0) {
+      console.log(`Cleaned up ${result.rowsAffected} old jobs`);
     }
   },
 };
 
 // Funciones de compatibilidad (mantienen la API existente)
-// export function createJob(prompt: string): string {
-export function createJob(): string {
+export async function createJob(): Promise<string> {
   return jobQueries.create();
 }
 
-export function updateJobStatus(
+export async function updateJobStatus(
   jobId: string,
   updates: Partial<ProcessingStatus>
-): void {
-  jobQueries.updateStatus(jobId, updates);
+): Promise<void> {
+  await jobQueries.updateStatus(jobId, updates);
 }
 
-export function getJobStatus(jobId: string): ProcessingStatus | undefined {
+export async function getJobStatus(
+  jobId: string
+): Promise<ProcessingStatus | undefined> {
   return jobQueries.getStatus(jobId);
 }
 
-export function completeJob(
+export async function completeJob(
   jobId: string,
   result: { transcription: string; gptResponse: string }
-): void {
-  jobQueries.complete(jobId, result);
+): Promise<void> {
+  await jobQueries.complete(jobId, result);
 }
 
-export function failJob(jobId: string, error: string): void {
-  jobQueries.fail(jobId, error);
+export async function failJob(jobId: string, error: string): Promise<void> {
+  await jobQueries.fail(jobId, error);
 }
 
-export function cleanupOldJobs(): void {
-  jobQueries.cleanupOld();
+export async function cleanupOldJobs(): Promise<void> {
+  await jobQueries.cleanupOld();
 }
 
-export function initializeJobQueue(): void {
-  jobQueries.cleanupOld();
-  console.log("SQLite job queue initialized");
+export async function initializeJobQueue(): Promise<void> {
+  await jobQueries.cleanupOld();
+  console.log("Turso job queue initialized");
 }

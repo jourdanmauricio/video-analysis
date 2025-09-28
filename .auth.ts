@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getUserByEmail, verifyPassword } from "@/lib/auth-utils";
+import { getUserByEmail, verifyPassword } from "@/services/turso-auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

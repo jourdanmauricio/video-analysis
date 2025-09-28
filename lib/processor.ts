@@ -6,11 +6,11 @@ import {
   completeJob,
   failJob,
   initializeJobQueue,
-} from "./jobQueue";
+} from "../services/turso-jobs";
 import { cleanupFile } from "./fileUtils";
 
 // Inicializar la queue al cargar el módulo
-initializeJobQueue();
+initializeJobQueue().catch(console.error);
 
 export async function processVideoAsync(
   jobId: string,
@@ -22,7 +22,7 @@ export async function processVideoAsync(
     console.log(`Starting processing job ${jobId}`);
 
     // Paso 1: Extraer audio
-    updateJobStatus(jobId, {
+    await updateJobStatus(jobId, {
       step: "extracting_audio",
       progress: 25,
       message: "Extrayendo audio del video...",
@@ -36,7 +36,7 @@ export async function processVideoAsync(
     cleanupFile(videoPath);
 
     // Paso 2: Transcribir audio
-    updateJobStatus(jobId, {
+    await updateJobStatus(jobId, {
       step: "transcribing",
       progress: 50,
       message: "Transcribiendo audio con Whisper...",
@@ -47,7 +47,7 @@ export async function processVideoAsync(
     console.log(`Transcription completed for job ${jobId}`);
 
     // Paso 3: Generar respuesta GPT
-    updateJobStatus(jobId, {
+    await updateJobStatus(jobId, {
       step: "generating_response",
       progress: 75,
       message: "Generando respuesta con GPT-4...",
@@ -61,7 +61,7 @@ export async function processVideoAsync(
 
     // Completar job
     console.log(`Completing job ${jobId}`);
-    completeJob(jobId, { transcription, gptResponse });
+    await completeJob(jobId, { transcription, gptResponse });
 
     // Limpiar archivo de audio al final
     cleanupFile(audioPath);
@@ -71,7 +71,7 @@ export async function processVideoAsync(
     console.error(`Error processing job ${jobId}:`, error);
 
     // Marcar como fallido
-    failJob(
+    await failJob(
       jobId,
       error instanceof Error ? error.message : "Error desconocido"
     );

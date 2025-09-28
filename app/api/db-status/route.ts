@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { userQueries } from "../../../services/turso-db";
 
 export async function GET() {
   try {
     // Verificar conexión a la base de datos
-    const userCount = await prisma.user.count();
+    const userCount = await userQueries.count();
 
     return NextResponse.json(
       {

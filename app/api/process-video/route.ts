@@ -3,7 +3,7 @@ import path from "path";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createJob } from "@/lib/jobQueue";
+import { createJob } from "@/services/turso-jobs";
 import { processVideoAsync } from "@/lib/processor";
 import { ensureDirectoryExists, generateUniqueFilename } from "@/lib/fileUtils";
 
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
     // Crear job para procesamiento asíncrono
     // const jobId = createJob(prompt);
-    const jobId = createJob();
+    const jobId = await createJob();
 
     // Guardar el archivo de video
     const videoFilename = generateUniqueFilename(videoFile.name);

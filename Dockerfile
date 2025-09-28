@@ -31,11 +31,8 @@ RUN mkdir -p uploads temp data logs && \
 # Cambiar a usuario no-root por seguridad
 USER node
 
-# Generar cliente de Prisma y build de Next.js 15
-RUN npx prisma generate && npm run build
-
-# Inicializar base de datos después del build
-RUN echo '🚀 Inicializando base de datos...' && node scripts/init-database.js || echo '⚠️ Warning: Database initialization failed, continuing...'
+# Build de Next.js 15
+RUN npm run build
 
 # Exponer puerto
 EXPOSE 3000
@@ -48,7 +45,6 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENV NODE_ENV=production
 ENV UPLOAD_DIR=/app/uploads
 ENV TEMP_DIR=/app/temp
-ENV DATABASE_PATH=/app/data/jobs.db
 
 # Comando de inicio
 CMD ["npm", "start"]

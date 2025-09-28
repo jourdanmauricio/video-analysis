@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getJobStatus } from "@/lib/jobQueue";
+import { getJobStatus } from "@/services/turso-jobs";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Job ID requerido" }, { status: 400 });
   }
 
-  const jobStatus = getJobStatus(jobId);
+  const jobStatus = await getJobStatus(jobId);
 
   if (!jobStatus) {
     return NextResponse.json({ error: "Job no encontrado" }, { status: 404 });
