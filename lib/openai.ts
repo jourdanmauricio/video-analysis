@@ -38,7 +38,9 @@ export async function generateGPTResponse(
         },
         {
           role: "user",
-          content: `Prompt del usuario: ${prompt}\n\nTexto transcrito del audio: ${transcribedText}\n\nPor favor, responde según las instrucciones del prompt utilizando el texto transcrito.`,
+          content: `Prompt del usuario: ${prompt}\n\n
+          Texto transcrito del audio: ${transcribedText}\n\n
+          Responde según las instrucciones del prompt utilizando el texto transcrito.`,
         },
       ],
       max_tokens: 2000,
