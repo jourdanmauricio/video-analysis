@@ -1,4 +1,4 @@
-const { createUser, getUserByEmail } = require("../lib/auth-utils");
+const { createUser, getUserByEmail } = require("../lib/auth-utils.js");
 
 async function seedDatabase() {
   console.log("🌱 Iniciando seeding de la base de datos...");

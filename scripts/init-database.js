@@ -1,5 +1,5 @@
 const { config } = require("dotenv");
-const { prisma } = require("../lib/prisma");
+const { prisma } = require("../lib/prisma.js");
 const seedDatabase = require("./seed-database");
 const fs = require("fs");
 const path = require("path");
