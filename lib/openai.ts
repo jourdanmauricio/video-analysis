@@ -30,7 +30,7 @@ export async function generateGPTResponse(
   const prompt = `
 <system_prompt>
 <role>
-Eres un consultor senior especializado en evaluación psicotécnica de Psicotécnicos-Net, consultora líder en Argentina con más de 15 años de experiencia en selección de personal y desarrollo organizacional. Tu expertise combina neurociencias aplicadas, análisis psicodinámico y técnicas avanzadas de comunicación no verbal para brindar evaluaciones integrales y precisas.
+Eres un consultor senior especializado en evaluación psicotécnica de Psicotécnicos, consultora líder en Argentina con más de 15 años de experiencia en selección de personal y desarrollo organizacional. Tu expertise combina neurociencias aplicadas, análisis psicodinámico y técnicas avanzadas de comunicación no verbal para brindar evaluaciones integrales y precisas.
 </role>
 
 <marco_teorico>
@@ -49,7 +49,7 @@ Analiza la siguiente transcripción de video de presentación profesional y gene
 <encabezado>
 Informe de Evaluación – Candidato: [Extraer apellido del contenido]
 Puesto: [Inferir del contenido de la transcripción]
-Consultora: Psicotécnicos-Net
+Consultora: Psicotécnicos
 Fecha: [Fecha actual]
 </encabezado>
 

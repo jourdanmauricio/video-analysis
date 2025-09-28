@@ -200,7 +200,7 @@ const VideoProcessor: React.FC = () => {
       </h1>
 
       {/* Debug Panel */}
-      {debugLogs.length > 0 && (
+      {/* {debugLogs.length > 0 && (
         <div className="mb-6 p-4 bg-gray-100 border rounded-lg">
           <h3 className="font-medium text-gray-900 mb-2">🐛 Debug Logs:</h3>
           <div className="text-xs font-mono text-gray-700 max-h-32 overflow-y-auto">
@@ -214,7 +214,7 @@ const VideoProcessor: React.FC = () => {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
         <h3 className="font-medium text-blue-900 mb-2">
