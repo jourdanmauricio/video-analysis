@@ -8,7 +8,8 @@ RUN apk add --no-cache \
     python3 \
     make \
     g++ \
-    libc6-compat
+    libc6-compat \
+    curl
 
 # Crear directorio de trabajo
 WORKDIR /app
@@ -36,6 +37,10 @@ RUN npx prisma generate && npm run build
 # Exponer puerto
 EXPOSE 3000
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
 # Variables de entorno por defecto
 ENV NODE_ENV=production
 ENV UPLOAD_DIR=/app/uploads
@@ -43,4 +48,4 @@ ENV TEMP_DIR=/app/temp
 ENV DATABASE_PATH=/app/data/jobs.db
 
 # Comando de inicio con inicialización de base de datos
-CMD ["sh", "-c", "node scripts/init-database.js && npm start"]
+CMD ["sh", "-c", "node scripts/init-database.js; npm start"]

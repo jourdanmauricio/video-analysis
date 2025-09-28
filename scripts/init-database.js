@@ -23,7 +23,11 @@ async function initializeDatabase() {
 
     if (userCount === 0) {
       console.log("📝 Base de datos vacía, ejecutando seeding...");
-      await seedDatabase();
+      try {
+        await seedDatabase();
+      } catch (seedError) {
+        console.warn("⚠️  Warning: Seeding falló, pero continuando:", seedError.message);
+      }
     } else {
       console.log(`📊 Base de datos ya tiene ${userCount} usuarios`);
     }
@@ -31,10 +35,15 @@ async function initializeDatabase() {
     console.log("✅ Base de datos inicializada correctamente");
   } catch (error) {
     console.error("❌ Error inicializando base de datos:", error);
-    throw error;
+    // No lanzar el error, solo loggearlo
+    console.log("⚠️  Continuando sin inicialización de base de datos...");
   } finally {
     // Cerrar la conexión de Prisma
-    await prisma.$disconnect();
+    try {
+      await prisma.$disconnect();
+    } catch (disconnectError) {
+      console.warn("⚠️  Warning: Error cerrando conexión Prisma:", disconnectError.message);
+    }
   }
 }
 
