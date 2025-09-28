@@ -15,8 +15,8 @@ initializeJobQueue();
 export async function processVideoAsync(
   jobId: string,
   videoPath: string,
-  audioPath: string,
-  prompt: string
+  audioPath: string
+  //prompt: string
 ): Promise<void> {
   try {
     console.log(`Starting processing job ${jobId}`);
@@ -54,7 +54,8 @@ export async function processVideoAsync(
     });
 
     console.log(`Starting GPT response for job ${jobId}`);
-    const gptResponse = await generateGPTResponse(prompt, transcription);
+    // const gptResponse = await generateGPTResponse(prompt, transcription);
+    const gptResponse = await generateGPTResponse(transcription);
     // const gptResponse = "test";
     console.log(`GPT response completed for job ${jobId}`);
 

@@ -171,7 +171,8 @@ export const jobQueries = {
 };
 
 // Funciones de compatibilidad (mantienen la API existente)
-export function createJob(prompt: string): string {
+// export function createJob(prompt: string): string {
+export function createJob(): string {
   return jobQueries.create();
 }
 

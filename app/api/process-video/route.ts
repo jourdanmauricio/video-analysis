@@ -27,10 +27,11 @@ export async function POST(req: NextRequest) {
     // Parsear el form data
     const formData = await req.formData();
 
-    const prompt = formData.get("prompt") as string;
+    // const prompt = formData.get("prompt") as string;
     const videoFile = formData.get("video") as File;
 
-    if (!prompt || !videoFile) {
+    if (!videoFile) {
+      // if (!prompt || !videoFile) {
       return NextResponse.json(
         {
           success: false,
@@ -60,7 +61,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Crear job para procesamiento asíncrono
-    const jobId = createJob(prompt);
+    // const jobId = createJob(prompt);
+    const jobId = createJob();
 
     // Guardar el archivo de video
     const videoFilename = generateUniqueFilename(videoFile.name);
@@ -76,7 +78,8 @@ export async function POST(req: NextRequest) {
     const audioPath = path.join(tempDir, audioFilename);
 
     // Iniciar procesamiento asíncrono (no esperar)
-    processVideoAsync(jobId, videoPath, audioPath, prompt).catch(console.error);
+    // processVideoAsync(jobId, videoPath, audioPath, prompt).catch(console.error);
+    processVideoAsync(jobId, videoPath, audioPath).catch(console.error);
 
     // Devolver inmediatamente el job ID
     return NextResponse.json(

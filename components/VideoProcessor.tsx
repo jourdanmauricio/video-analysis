@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 
 import type { ProcessingResponse, ProcessingStatus } from "@/types";
+import ReactMarkdown from "react-markdown";
 
 const VideoProcessor: React.FC = () => {
   const [video, setVideo] = useState<File | null>(null);
-  const [prompt, setPrompt] = useState("");
+  // const [prompt, setPrompt] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<ProcessingStatus | null>(null);
@@ -117,7 +118,8 @@ const VideoProcessor: React.FC = () => {
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      if (!video || !prompt.trim()) {
+      if (!video) {
+        // if (!video || !prompt.trim()) {
         alert("Por favor selecciona un video y escribe un prompt");
         return;
       }
@@ -131,7 +133,7 @@ const VideoProcessor: React.FC = () => {
       try {
         const formData = new FormData();
         formData.append("video", video);
-        formData.append("prompt", prompt);
+        // formData.append("prompt", prompt);
 
         addDebugLog("Sending request to /api/process-video");
         const response = await fetch("/api/process-video", {
@@ -162,7 +164,8 @@ const VideoProcessor: React.FC = () => {
         setIsProcessing(false);
       }
     },
-    [video, prompt, addDebugLog]
+    [video, addDebugLog]
+    // [video, prompt, addDebugLog]
   );
 
   const getProgressColor = useCallback((step: string) => {
@@ -185,7 +188,7 @@ const VideoProcessor: React.FC = () => {
   const handleReset = useCallback(() => {
     setResult(null);
     setVideo(null);
-    setPrompt("");
+    // setPrompt("");
     setJobStatus(null);
     setDebugLogs([]);
   }, []);
@@ -250,7 +253,7 @@ const VideoProcessor: React.FC = () => {
           )}
         </div>
 
-        <div>
+        {/* <div>
           <label htmlFor="prompt" className="block text-sm font-medium mb-2">
             Prompt para GPT-4
           </label>
@@ -266,11 +269,12 @@ const VideoProcessor: React.FC = () => {
           <p className="mt-1 text-xs text-gray-500">
             Sé específico en tus instrucciones para obtener mejores resultados
           </p>
-        </div>
+        </div> */}
 
         <button
           type="submit"
-          disabled={isProcessing || !video || !prompt.trim()}
+          // disabled={isProcessing || !video || !prompt.trim()}
+          disabled={isProcessing || !video}
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
         >
           {isProcessing ? "Procesando..." : "Procesar Video"}
@@ -313,7 +317,7 @@ const VideoProcessor: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <p className="text-sm text-gray-700">
               <strong>Estado:</strong> {jobStatus.message}
             </p>
@@ -329,7 +333,7 @@ const VideoProcessor: React.FC = () => {
                 ? "Completado"
                 : "Procesando"}
             </p>
-          </div>
+          </div> */}
         </div>
       )}
 
@@ -342,7 +346,7 @@ const VideoProcessor: React.FC = () => {
               </h3>
 
               <div className="space-y-6">
-                <div>
+                {/* <div>
                   <h4 className="font-medium text-gray-900 mb-3">
                     🎵 Transcripción del Audio:
                   </h4>
@@ -351,15 +355,59 @@ const VideoProcessor: React.FC = () => {
                       {result.transcription}
                     </p>
                   </div>
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                   <h4 className="font-medium text-gray-900 mb-3">
-                    🤖 Análisis de GPT-4:
+                    🤖 Análisis:
                   </h4>
                   <div className="bg-white p-4 rounded-lg border border-gray-200 max-h-96 overflow-y-auto">
                     <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">
                       {result.gptResponse}
+                    </div>
+                  </div>
+                </div> */}
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-3">
+                    🤖 Análisis:
+                  </h4>
+                  <div className="bg-white p-4 rounded-lg border border-gray-200 max-h-96 overflow-y-auto">
+                    <div className="text-gray-700 leading-relaxed prose prose-sm max-w-none">
+                      <ReactMarkdown
+                        components={{
+                          h1: ({ children }) => (
+                            <h1 className="text-xl font-bold mb-3 text-gray-900">
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2 className="text-lg font-semibold mb-2 text-gray-800">
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3 className="text-md font-semibold mb-2 text-gray-800">
+                              {children}
+                            </h3>
+                          ),
+                          p: ({ children }) => (
+                            <p className="mb-3 text-gray-700">{children}</p>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="list-disc ml-6 mb-3">{children}</ul>
+                          ),
+                          li: ({ children }) => (
+                            <li className="mb-1">{children}</li>
+                          ),
+                          strong: ({ children }) => (
+                            <strong className="font-semibold text-gray-900">
+                              {children}
+                            </strong>
+                          ),
+                        }}
+                      >
+                        {result.gptResponse}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 </div>
