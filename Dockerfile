@@ -17,7 +17,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar dependencias con soporte para SQLite nativo
-RUN npm ci --only=production && npm cache clean --force && \
+RUN npm ci && npm cache clean --force && \
     rm -rf /tmp/* /var/cache/apk/*
 
 # Copiar código fuente
