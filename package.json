@@ -9,8 +9,7 @@
     "lint": "eslint",
     "create-user": "tsx scripts/create-user.ts",
     "seed": "tsx scripts/seed-database.ts",
-    "init-db": "tsx scripts/init-database.ts",
-    "postinstall": "npm run init-db"
+    "init-db": "tsx scripts/init-database.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",

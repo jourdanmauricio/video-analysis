@@ -42,5 +42,5 @@ ENV UPLOAD_DIR=/app/uploads
 ENV TEMP_DIR=/app/temp
 ENV DATABASE_PATH=/app/data/jobs.db
 
-# Comando de inicio
-CMD ["npm", "start"]
+# Comando de inicio con inicialización de base de datos
+CMD ["sh", "-c", "node scripts/init-database.js && npm start"]
