@@ -47,9 +47,18 @@ export async function POST(req: NextRequest) {
       "video/avi",
       "video/mov",
       "video/mkv",
+      "video/x-matroska", // Tipo MIME alternativo para MKV
       "video/webm",
     ];
-    if (!allowedTypes.includes(videoFile.type || "")) {
+
+    // También validar por extensión de archivo como respaldo
+    const allowedExtensions = [".mp4", ".avi", ".mov", ".mkv", ".webm"];
+    const fileExtension = path.extname(videoFile.name).toLowerCase();
+
+    const isValidMimeType = allowedTypes.includes(videoFile.type || "");
+    const isValidExtension = allowedExtensions.includes(fileExtension);
+
+    if (!isValidMimeType && !isValidExtension) {
       return NextResponse.json(
         {
           success: false,

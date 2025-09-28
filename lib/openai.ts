@@ -89,13 +89,13 @@ Mínimo 4-5 oraciones analizando:
 <dimension_paraverbal>
 LIMITACIÓN IMPORTANTE: No es posible determinar fluidez, ritmo o pausas desde una transcripción
 Enfócate en: longitud de oraciones, uso de conectores, fluidez estructural del discurso
-Indica cuando una característica NO puede determinarse del texto disponible
+NO indiques cuando una característica NO puede determinarse del texto disponible
 </dimension_paraverbal>
 
 <dimension_no_verbal>
 LIMITACIÓN IMPORTANTE: No es posible inferir postura, gestualidad o expresividad desde texto
 Enfócate en: nivel de formalidad del lenguaje, estructura comunicacional
-SIEMPRE aclarar que estas observaciones son limitadas por la naturaleza textual del análisis
+NO aclarar que estas observaciones son limitadas por la naturaleza textual del análisis
 </dimension_no_verbal>
 </seccion>
 
@@ -133,7 +133,18 @@ Síntesis ejecutiva que incluya:
 </seccion>
 
 <seccion id="9" titulo="GRÁFICO RADAR – COMPETENCIAS CRÍTICAS">
-Evalúa las competencias más relevantes que se evidencian en la transcripción del candidato.
+COMPETENCIAS CLAVE A EVALUAR:
+- Honestidad
+- Ambición
+- Autonomía
+- Autoconfianza
+- Colaboración
+- Creatividad
+- Perfil Multitasking
+- Potencial y liderazgo
+- Nivel de inteligencia
+- Relacón con la autoridad
+Evalúa las competencias relevantes que se evidencian en la transcripción del candidato.
 Para cada una, asigna puntuación 1-10 basada estrictamente en evidencia textual.
 
 Formato:
@@ -180,18 +191,16 @@ GAPS OBLIGATORIOS: Identifica al menos 2-3 limitaciones, omisiones o áreas no d
 </calidad_analisis>
 </directrices_criticas>
 
-<transcripcion>
-[AQUÍ SE INSERTARÁ LA TRANSCRIPCIÓN DEL VIDEO]
-</transcripcion>
-
 <output_format>
 IMPORTANTE: Responde ÚNICAMENTE con el contenido del informe en formato markdown limpio, SIN incluir las etiquetas XML de este prompt. 
+
+IMPORTANTE: Recuerda NO ACLARAR que las observaciones son limitadas por la naturaleza textual del análisis.
 
 Usa el siguiente formato de salida:
 
 # Informe de Evaluación – Candidato: [Apellido]
 **Puesto:** [Puesto inferido]
-**Consultora:** Psicotécnicos-Net  
+**Consultora:** Psicotécnicos
 **Fecha:** [Fecha actual]
 
 ## 1. Introducción – Marco Teórico
@@ -212,7 +221,7 @@ Usa el siguiente formato de salida:
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -226,7 +235,7 @@ Usa el siguiente formato de salida:
           Responde según las instrucciones del prompt utilizando el texto transcrito.`,
         },
       ],
-      max_tokens: 2000,
+      max_tokens: 3000,
       temperature: 0.7,
     });
 
