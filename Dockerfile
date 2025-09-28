@@ -34,6 +34,9 @@ USER node
 # Generar cliente de Prisma y build de Next.js 15
 RUN npx prisma generate && npm run build
 
+# Inicializar base de datos después del build
+RUN echo '🚀 Inicializando base de datos...' && node scripts/init-database.js || echo '⚠️ Warning: Database initialization failed, continuing...'
+
 # Exponer puerto
 EXPOSE 3000
 
@@ -47,5 +50,5 @@ ENV UPLOAD_DIR=/app/uploads
 ENV TEMP_DIR=/app/temp
 ENV DATABASE_PATH=/app/data/jobs.db
 
-# Comando de inicio con inicialización de base de datos
-CMD ["sh", "-c", "echo '🚀 Iniciando contenedor...' && node scripts/init-database.js && echo '✅ Inicialización completada, iniciando aplicación...' && npm start"]
+# Comando de inicio
+CMD ["npm", "start"]
