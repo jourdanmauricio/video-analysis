@@ -48,4 +48,4 @@ ENV TEMP_DIR=/app/temp
 ENV DATABASE_PATH=/app/data/jobs.db
 
 # Comando de inicio con inicialización de base de datos
-CMD ["sh", "-c", "node scripts/init-database.js; npm start"]
+CMD ["sh", "-c", "echo '🚀 Iniciando contenedor...' && node scripts/init-database.js && echo '✅ Inicialización completada, iniciando aplicación...' && npm start"]
