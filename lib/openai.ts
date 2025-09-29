@@ -142,7 +142,7 @@ COMPETENCIAS CLAVE A EVALUAR:
 - Perfil Multitasking
 - Potencial y liderazgo
 - Nivel de inteligencia
-- Relacón con la autoridad
+- Relación con la autoridad
 Evalúa las competencias relevantes que se evidencian en la transcripción del candidato.
 Para cada una, asigna puntuación 1-10 basada estrictamente en evidencia textual.
 
@@ -199,7 +199,6 @@ Usa el siguiente formato de salida:
 
 # Informe de Evaluación – Candidato: [Apellido]
 **Puesto:** [Puesto inferido]
-**Consultora:** Psicotécnicos
 **Fecha:** [Fecha actual]
 
 ## 1. Introducción – Marco Teórico
