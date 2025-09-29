@@ -49,7 +49,6 @@ Analiza la siguiente transcripción de video de presentación profesional y gene
 <encabezado>
 Informe de Evaluación – Candidato: [Extraer apellido del contenido]
 Puesto: [Inferir del contenido de la transcripción]
-Consultora: Psicotécnicos
 Fecha: [Fecha actual]
 </encabezado>
 
@@ -235,8 +234,10 @@ Usa el siguiente formato de salida:
           Responde según las instrucciones del prompt utilizando el texto transcrito.`,
         },
       ],
-      max_tokens: 3000,
-      temperature: 0.7,
+      // max_tokens: 3000,
+      max_completion_tokens: 3000,
+      // temperature: 0.7,
+      temperature: 1,
     });
 
     return (
